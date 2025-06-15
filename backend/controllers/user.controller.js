@@ -1,6 +1,7 @@
 import Profile from "../models/profile.model.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 
 export const register = async (req, res) => {
@@ -41,4 +42,34 @@ export const register = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 
+}
+
+
+export const login = async (req, res) => {
+    try {
+
+        const {email, password} = req.body;
+        if (!email || !password) {
+            return res.status(400).json({message:"username and password are required"});
+        }
+        
+        const user = await User.findOne({email});
+
+        if (!user) {
+            return res.status(400).json({message: "User not found"});
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({message: "Invalid credentials"});
+        }
+
+        const token = crypto.randomBytes(32).toString('hex'); 
+
+        await user.updateOne({_id: user._id}, {token});
+        res.status(200).json({message: "Login successful", token, userId: user._id});
+
+    } catch (error) {
+        res.status(500).json({message: "Internal server error"});
+    }
 }
