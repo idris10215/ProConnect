@@ -73,3 +73,21 @@ export const login = async (req, res) => {
         res.status(500).json({message: "Internal server error"});
     }
 }
+
+export const updateProfilePicture = async (req, res) => {
+    try {
+
+        const {token } = req.body;
+
+        const user = await User.findOne({token});
+        if (!user) {
+            return res.status(400).json({message: "User not found"});
+        }
+
+        user.profilePicture = req.file.filename;
+
+    } catch (error) {
+        res.status(500).json({message: "Internal server error"});
+        
+    }
+}
