@@ -25,4 +25,3 @@ router.route("/login")
     .post(login)
 
 export default router;
-// This code defines a route for user registration in an Express application.
