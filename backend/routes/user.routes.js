@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { login, register, updateProfilePicture } from "../controllers/user.controller.js";
+import { login, register, updateProfilePicture, updateUserProfile } from "../controllers/user.controller.js";
 import multer from "multer";
 
 const router = Router();
@@ -22,6 +22,11 @@ router.route("/register")
     .post(register);
 
 router.route("/login")
-    .post(login)
+    .post(login);
+
+router.route("/user_update").post(updateUserProfile);
+
+
+
 
 export default router;

@@ -34,6 +34,8 @@ export const register = async (req, res) => {
 
         const profile = new Profile({userId: newUser._id});
 
+        await profile.save();
+
         res.status(201).json({ message: "User registered successfully" });
 
 
@@ -68,7 +70,7 @@ export const login = async (req, res) => {
 
         user.token = token;
         await user.save();
-        
+
         res.status(200).json({message: "Login successful", token, userId: user._id});
 
     } catch (error) {
@@ -88,6 +90,38 @@ export const updateProfilePicture = async (req, res) => {
 
         user.profilePicture = req.file.filename;
 
+    } catch (error) {
+        res.status(500).json({message: "Internal server error"});
+        
+    }
+}
+
+export const updateUserProfile = async (req, res) => {
+    try {
+
+        const { token, ...newuserdata} = req.body;
+
+        const user = await User.findOne({token});
+        if (!user) {
+            return res.status(400).json({message: "User not found"});
+        }
+
+        const {username, email} = newuserdata;
+
+        const existingUser = await User.findOne({$or: [{username}, {email}]});
+
+        if (existingUser){
+            if(existingUser || String(existingUser._id) !== String(user._id)) {
+                return res.status(400).json({message: "Username or email already exists"});
+            }
+        }
+
+        Object.assign(user, newuserdata);
+
+        await user.save();
+
+        res.status(200).json({message: "User profile updated successfully", user});
+        
     } catch (error) {
         res.status(500).json({message: "Internal server error"});
         
