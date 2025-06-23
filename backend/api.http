@@ -18,3 +18,12 @@ Content-Type: application/json
     "email": "john@gmail.com",
     "password": "securepassword123"
 }
+
+###
+
+GET http://localhost:8000/get_user_and_profile HTTP/1.1
+Content-Type: application/json
+
+{
+    "token":""
+}

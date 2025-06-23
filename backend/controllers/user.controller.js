@@ -127,3 +127,28 @@ export const updateUserProfile = async (req, res) => {
         
     }
 }
+
+
+
+export const getUserAndProfile = async (req, res) => {
+    try {
+        const { token } = req.body;
+
+        const user = await User.findOne({ token });
+
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        const userProfile = await Profile.findOne({ userId: user._id })
+        .populate("userId", "name email username profilePicture");
+
+
+        res.status(200).json({ user, profile: userProfile });
+
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+
