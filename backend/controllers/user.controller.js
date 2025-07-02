@@ -2,6 +2,8 @@ import Profile from "../models/profile.model.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import PDFDocument from "pdfkit";
+import fs, { rmSync } from "fs";
 
 export const register = async (req, res) => {
   try {
@@ -173,3 +175,50 @@ export const getAllUserProfiles = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+const convertuserDataToPDF = async (userData) => {
+  const doc = new PDFDocument();
+
+  const outputPath = crypto.randomBytes(16).toString("hex") + ".pdf";
+
+  const stream = fs.createWriteStream("uploads/" + outputPath);
+
+  doc.pipe(stream);
+
+  doc.image (`uploads/${userData.userId.profilePicture}`, {
+    fit: [150, 150],
+    align: "center",
+    width: 150,
+    height: 150, 
+  });
+
+  doc.fontSize(16).text(`Name: ${userData.userId.name}`);
+  doc.fontSize(16).text(`Email: ${userData.userId.email}`);
+  doc.fontSize(16).text(`Username: ${userData.userId.username}`);
+  doc.fontSize(16).text(`Bio: ${userData.bio || "No bio available"}`);
+  doc.fontSize(16).text(`Current position: ${userData.currentPosition || "No current position available"}`);
+
+  doc.fontSize(16).text("Past work")
+  userData.pastWork.forEach((work, index) => {
+    doc.fontSize(14).text(`Company name: ${work.companyName}`);
+    doc.fontSize(14).text(`Position: ${work.position}`);
+    doc.fontSize(14).text(`Years: ${work.years}`);
+  });
+
+  doc.end();
+
+  return outputPath;
+};
+
+
+export const downloadProfile = async (req, res) => {
+
+  const user_id = req.query.id;
+
+  const userProfile = await Profile.findOne({ userId: user_id }).populate("userId", "name email username profilePicture");
+
+  let outputPath = await convertuserDataToPDF(userProfile);
+
+  return res.json({"message": outputPath});
+};
+
