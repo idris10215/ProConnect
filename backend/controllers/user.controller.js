@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import PDFDocument from "pdfkit";
 import fs, { rmSync } from "fs";
+import ConnectionRequest from "../models/connections.model.js";
 
 export const register = async (req, res) => {
   try {
@@ -222,3 +223,44 @@ export const downloadProfile = async (req, res) => {
   return res.json({"message": outputPath});
 };
 
+export const sendConnectionRequest = async (req, res) => {
+
+  const { token, connectionId} = req.body;
+
+  try {
+
+    const user = await User.findOne({ token });
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const connectionUser = await User.findone ({ _id: connectionId });
+
+    if (!connectionUser) {
+      return res.status(400).json({ message: "Connection user not found" });
+    }
+
+    const existingRequest = await ConnectionRequest.findOne({
+      userId: user._id,
+      connectionId: connectionUser._id,
+    });
+
+    if (existingRequest) {
+      return res.status(400).json({ message: "Connection request already sent" });
+    }
+
+    const request = new ConnectionRequest({
+      userId: user._id,
+      connectionId: connectionUser._id
+    });
+
+    await request.save();
+
+    res.status(200).json({ message: "Connection request sent successfully" });
+
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+
+}
