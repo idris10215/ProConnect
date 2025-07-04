@@ -197,11 +197,11 @@ const convertuserDataToPDF = async (userData) => {
   doc.fontSize(16).text(`Email: ${userData.userId.email}`);
   doc.fontSize(16).text(`Username: ${userData.userId.username}`);
   doc.fontSize(16).text(`Bio: ${userData.bio || "No bio available"}`);
-  doc.fontSize(16).text(`Current position: ${userData.currentPosition || "No current position available"}`);
+  doc.fontSize(16).text(`Current position: ${userData.currentPost || "No current position available"}`);
 
   doc.fontSize(16).text("Past work")
   userData.pastWork.forEach((work, index) => {
-    doc.fontSize(14).text(`Company name: ${work.companyName}`);
+    doc.fontSize(14).text(`Company name: ${work.company}`);
     doc.fontSize(14).text(`Position: ${work.position}`);
     doc.fontSize(14).text(`Years: ${work.years}`);
   });
