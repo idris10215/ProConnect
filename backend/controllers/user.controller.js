@@ -5,6 +5,7 @@ import crypto from "crypto";
 import PDFDocument from "pdfkit";
 import fs, { rmSync } from "fs";
 import ConnectionRequest from "../models/connections.model.js";
+import { Connection } from "mongoose";
 
 export const register = async (req, res) => {
   try {
@@ -258,6 +259,87 @@ export const sendConnectionRequest = async (req, res) => {
     await request.save();
 
     res.status(200).json({ message: "Connection request sent successfully" });
+
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+
+}
+
+export const getMyconnectionRequests = async (req, res) => {
+  const { token } = req.body;
+
+  try {
+
+    const user = await User.findOne({ token });
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const connection = await ConnectionRequest.find( { userId: user._id }  )
+    .populate("connectionId", "name email username profilePicture");
+
+    return res.json ( { connection } );
+
+    
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+
+}
+
+
+export const whatAreMyConnections = async (req, res) => {
+
+  const { token } = req.body;
+
+  try {
+
+    const user = await User.findOne( {token});
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const connections = await ConnectionRequest.find( { connectionId: user._id } )
+      .populate("userId", "name email username profilePicture");
+
+    return res.json(connections);
+
+
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+
+}
+
+
+export const acceptConnectionRequest = async (req, res) => {
+  const { token, requestId, action_type } = req.body;
+
+  try {
+    const user = await User.findOne({ token });
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const connection = await ConnectionRequest.findOne({ _id: requestId });
+
+    if (!connection) {
+      return res.status(400).json({ message: "Connection request not found" });
+    }
+
+    if ( action_type === "accept" ) {
+      connection.status_accepted = true;
+    } else {
+      connection.status_accepted = false;
+    }
+
+    await connection.save();
+
+    return res.json({ message: "Connection request updated successfully" });
 
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
