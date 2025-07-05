@@ -5,7 +5,7 @@ import crypto from "crypto";
 import PDFDocument from "pdfkit";
 import fs, { rmSync } from "fs";
 import ConnectionRequest from "../models/connections.model.js";
-import { Connection } from "mongoose";
+
 
 export const register = async (req, res) => {
   try {
