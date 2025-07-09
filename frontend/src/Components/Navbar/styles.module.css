@@ -1,0 +1,32 @@
+.container {
+    padding: 1.2rem 4rem;
+}
+
+.logo {
+    cursor: pointer;
+    font-size: 2rem;
+}
+
+.navBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navBarOptionsContainer {
+    display: flex;
+    
+}
+
+.buttonJoin {
+    width: fit-content;
+    background-color: #8768a6;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.3s ;
+    margin-top: 1.5rem;
+    padding: 0.5rem 1.5rem;
+    border-radius: 1.5rem;
+}
