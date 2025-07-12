@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  justify-content: center;
+  height: 90svh;
+  align-items: center;
+  background: snow;
+}
+
+.cardContainer {
+  height: 80vh;
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 80vw;
+  border-radius: 10px;
+  background: white;
+  box-shadow: 10px 10px 15px rgb(173, 173, 173);
+}
+
+
+.cardContainer_left {
+  flex: 0.6;
+  padding: 2rem;
+  text-align: center;
+}
+.cardContainer_right {
+  flex: 0.4;
+  background: #77a6fe;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cardContainer_left_heading {
+    color:#77a6fe;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
