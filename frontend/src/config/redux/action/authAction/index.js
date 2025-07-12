@@ -35,7 +35,8 @@ export const registerUser = createAsyncThunk (
             const response = await clientServer.post(`/register`, {
                 email: user.email,
                 password: user.password,
-                username: user.username
+                username: user.username,
+                name: user.name
             });
 
             if ( response.data.token ) {
